@@ -6,7 +6,7 @@
 Before beginning the blink test, gather the following components and follow along with the Wiring Diagram.
 
 **Reference Files:**
-* Image of Wiring Diagram: [cs467_pico_blink_test_wiring.png](docs/cs467_pico_blink_test_wiring.png)
+* Image of Wiring Diagram: [pico_blink_test_wiring.png](docs/cs467_pico_blink_test_wiring.png)
 * Fritzing File: [cs467_pico_blink_test_wiring.fzz](docs/cs467_pico_blink_test_wiring.fzz)
   
 **Bill of Materials (BOM)**
