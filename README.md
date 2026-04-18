@@ -24,5 +24,17 @@ Before beginning the blink test, gather the following components and follow alon
     * Green (medium x 1, long x 1)
     * Blue (long x 1)
 
-
+### Flashing the Pico for the Blink Test
+Verify functionality:
+1. **Download the given pre-compiled file** [LEDarray.uf2](bin/LEDarray.uf2) where UF2 = USB Flashing Format, in this repository and download it to your local device.
+2. **Enter into Bootloader Mode:**
+    * Connect micro USB cord into the Raspberry Pi Pico's micro USB port.
+    * Hold down the BOOTSEL button on the Raspberry Pi Pico microcontroller.
+    * While holding down the button, connect the USB cord to your local device.
+    * Release the BOOTSEL button once a new drive pops up. Note: At first the computer may "recognize the microcontroller as a thumb drive. Double-click the pop-up menu and open in File Explorer. This should open a new drive named **RPI-RP2**.
+3. **Flash the Microcontroller:**
+    * Copy and paste the `LEDarray.uf2` file into the **RPI-RP2** drive.
+    * The drive will disappear, and the Pico will reboot.
+4. **Verify Successful Flashing:**
+     * If successful, the LED array on the breadboard should begin their sequential blinking.  
   
