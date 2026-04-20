@@ -14,13 +14,13 @@
       },
       "problemMatcher": "$gcc",
       "windows": {
-        "command": "${env:USERPROFILE}/.pico-sdk/ninja/v1.12.1/ninja.exe"
+        "command": "${userHome}/.pico-sdk/ninja/v1.12.1/ninja.exe"
       }
     },
     {
       "label": "Run Project",
       "type": "process",
-      "command": "${env:HOME}/.pico-sdk/picotool/2.2.0-a4/picotool/picotool",
+      "command": "${userHome}/.pico-sdk/picotool/2.2.0-a4/picotool/picotool",
       "args": ["load", "${command:raspberry-pi-pico.launchTargetPath}", "-fx"],
       "presentation": {
         "reveal": "always",
@@ -28,7 +28,7 @@
       },
       "problemMatcher": [],
       "windows": {
-        "command": "${env:USERPROFILE}/.pico-sdk/picotool/2.2.0-a4/picotool/picotool.exe"
+        "command": "${userHome}/.pico-sdk/picotool/2.2.0-a4/picotool/picotool.exe"
       }
     },
     {
@@ -47,7 +47,7 @@
       ],
       "problemMatcher": [],
       "windows": {
-        "command": "${env:USERPROFILE}/.pico-sdk/openocd/0.12.0+dev/openocd.exe"
+        "command": "${userHome}/.pico-sdk/openocd/0.12.0+dev/openocd.exe"
       }
     },
     {
@@ -66,7 +66,7 @@
       ],
       "problemMatcher": [],
       "windows": {
-        "command": "${env:USERPROFILE}/.pico-sdk/openocd/0.12.0+dev/openocd.exe"
+        "command": "${userHome}/.pico-sdk/openocd/0.12.0+dev/openocd.exe"
       }
     },
     {
@@ -91,7 +91,7 @@
       ],
       "problemMatcher": [],
       "windows": {
-        "command": "${env:USERPROFILE}/.pico-sdk/openocd/0.12.0+dev/openocd.exe"
+        "command": "${userHome}/.pico-sdk/openocd/0.12.0+dev/openocd.exe"
       }
     }
   ]
