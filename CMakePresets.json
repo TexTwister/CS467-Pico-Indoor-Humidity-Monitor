@@ -1,0 +1,53 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "pico-base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "PICO_BOARD": "pico_w",
+                "PICO_SDK_PATH": "/home/cadav/pico-sdk",
+                "PICOTOOL_FETCH_FROM_GIT_PATH": "/home/cadav/.cache/pico-sdk-tools"
+            },
+            "environment": {
+                "PICO_SDK_PATH": "/home/cadav/pico-sdk",
+                "PICOTOOL_FETCH_FROM_GIT_PATH": "/home/cadav/.cache/pico-sdk-tools"
+            }
+        },
+        {
+            "name": "pico-debug",
+            "inherits": "pico-base",
+            "displayName": "Pico Debug",
+            "description": "Debug build for Raspberry Pi Pico W using the Pico SDK toolchain.",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "pico-release",
+            "inherits": "pico-base",
+            "displayName": "Pico Release",
+            "description": "Release build for Raspberry Pi Pico W using the Pico SDK toolchain.",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "pico-debug",
+            "configurePreset": "pico-debug"
+        },
+        {
+            "name": "pico-release",
+            "configurePreset": "pico-release"
+        }
+    ]
+}
