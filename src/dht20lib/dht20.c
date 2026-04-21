@@ -18,19 +18,11 @@
 #define DHT20_READY_TIMEOUT_MS       150
 #define DHT20_DATA_FRAME_SIZE        7
 
-static bool dht20_measurement_looks_sane(uint8_t status, const uint8_t* data) {
+static bool dht20_measurement_looks_sane(const uint8_t* data) {
     uint32_t raw_humidity    = 0;
     uint32_t raw_temperature = 0;
     float    humidity_rh     = 0.0f;
     float    temperature_c   = 0.0f;
-
-    if (data == NULL) {
-        return false;
-    }
-
-    if ((status & DHT20_BUSY_MASK) != 0) {
-        return false;
-    }
 
     raw_humidity = ((uint32_t)data[1] << 12) | ((uint32_t)data[2] << 4) |
                    ((uint32_t)data[3] >> 4);
@@ -46,10 +38,6 @@ static bool dht20_measurement_looks_sane(uint8_t status, const uint8_t* data) {
 
 static bool dht20_read_status(const dht20_t* sensor, uint8_t* status) {
     uint8_t command = DHT20_STATUS_COMMAND;
-
-    if (sensor == NULL || status == NULL) {
-        return false;
-    }
 
     if (i2c_write_blocking(sensor->i2c, sensor->address, &command, 1, true) <
         0) {
@@ -143,6 +131,7 @@ bool dht20_read(dht20_t* sensor, float* temperature_c, float* humidity_rh) {
     uint32_t      raw_humidity                = 0;
     uint32_t      raw_temperature             = 0;
     uint8_t       expected_crc                = 0;
+    bool          crc_mismatch                = false;
 
     if (sensor == NULL || temperature_c == NULL || humidity_rh == NULL) {
         return false;
@@ -179,13 +168,11 @@ bool dht20_read(dht20_t* sensor, float* temperature_c, float* humidity_rh) {
     expected_crc = dht20_crc8(data, 6);
     sensor->last_crc_expected = expected_crc;
     sensor->last_crc_received = data[6];
-    if (expected_crc != data[6]) {
-        if (!dht20_measurement_looks_sane(data[0], data)) {
-            return false;
-        }
-
-        sensor->last_read_used_crc_fallback = true;
+    crc_mismatch = expected_crc != data[6];
+    if (crc_mismatch && !dht20_measurement_looks_sane(data)) {
+        return false;
     }
+    sensor->last_read_used_crc_fallback = crc_mismatch;
 
     raw_humidity = ((uint32_t)data[1] << 12) | ((uint32_t)data[2] << 4) |
                    ((uint32_t)data[3] >> 4);

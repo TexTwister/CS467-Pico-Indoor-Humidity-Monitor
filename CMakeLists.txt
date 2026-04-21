@@ -1,16 +1,19 @@
 cmake_minimum_required(VERSION 3.13)
 
+if(NOT PICO_BOARD)
+    set(PICO_BOARD pico_w)
+endif()
+
+if(NOT PICO_COMPILER)
+    set(PICO_COMPILER pico_arm_cortex_m0plus_gcc)
+endif()
+
 include(pico_sdk_import.cmake)
 
 project(pico_indoor_humidity_monitor C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Loren's pico sdk initialization differs 
-if(NOT PICO_BOARD)
-    set(PICO_BOARD pico_w)
-endif()
 
 pico_sdk_init()
 
