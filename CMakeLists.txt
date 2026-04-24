@@ -29,6 +29,7 @@ set(PICO_BOARD pico CACHE STRING "Board type")
 include(pico_sdk_import.cmake)
 
 project(LEDarray C CXX ASM)
+project(humidity-monitor C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
@@ -55,3 +56,4 @@ target_include_directories(LEDarray PRIVATE
 
 pico_add_extra_outputs(LEDarray)
 
+add_subdirectory(src)
