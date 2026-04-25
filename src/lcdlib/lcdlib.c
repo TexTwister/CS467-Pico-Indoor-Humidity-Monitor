@@ -91,7 +91,7 @@ void send_byte_as_nibbles(struct lcd_inst* lcd, uint8_t b, uint8_t mode) {
 
 void do_hd44780_init_seq(struct lcd_inst* lcd) {
     send_nibble(lcd, LCD_INIT_CODE | LCD_BACKLIGHT);
-    sleep_us(5);
+    sleep_ms(5);
     send_nibble(lcd, LCD_INIT_CODE | LCD_BACKLIGHT);
     sleep_us(150);
     send_nibble(lcd, LCD_INIT_CODE | LCD_BACKLIGHT);
