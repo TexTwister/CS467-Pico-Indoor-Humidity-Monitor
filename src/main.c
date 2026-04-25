@@ -11,13 +11,8 @@ int main() {
     struct lcd_inst lcd = {
         100 * 1000,  // baud rate
         1,           // Pico I2C controller number (can be 0 or 1)
-<<<<<<< HEAD
-        27,           // I2C SDA pin number (Pin 32 = GP27)
-        26,           // I2C SCL pin number (Pin 31 = GP26)
-=======
         26,           // I2C SDA pin number (physical pin 31)
         27,           // I2C SCL pin number (physical pin 32)
->>>>>>> led
         NULL,        // Pico-SDK I2C instance; set NULL because the library will
                      // populate it during lcd_init()
     };
