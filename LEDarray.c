@@ -22,7 +22,7 @@ int main () {
         for (int i = 0; i < LED_COUNT; i++) {
             // 1 = ON; 0 = OFF
             gpio_put(LED_PINS[i], 1);
-            sleep_ms(500);
+            sleep_ms(1000);
             gpio_put(LED_PINS[i], 0);
         }
 
