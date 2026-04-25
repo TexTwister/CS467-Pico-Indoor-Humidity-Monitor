@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-// Test commit
 
 // Mapping out the hardware:
 //LED 1 is physically connected via jumper wire to GPIO 14, LED 2 to GPIO 12, LED 3 to GPIO 10, 
@@ -23,7 +22,7 @@ int main () {
         for (int i = 0; i < LED_COUNT; i++) {
             // 1 = ON; 0 = OFF
             gpio_put(LED_PINS[i], 1);
-            sleep_ms(150);
+            sleep_ms(500);
             gpio_put(LED_PINS[i], 0);
         }
 
