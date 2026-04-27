@@ -27,6 +27,7 @@ target_link_libraries(humidity-monitor
     PRIVATE
         pico_stdlib
         dht20lib
+        lcdlib
 )
 
 pico_add_extra_outputs(humidity-monitor)
