@@ -117,7 +117,7 @@ void led_error_flash(void) {
 }
 
 // Testing light patterns
-int main() {
+int led_testing_main() {
 
     // Initialize I/O
     stdio_init_all();
@@ -134,7 +134,7 @@ int main() {
         led_humidity_lightup(10.00f);
         sleep_ms(2000);
 
-        // Test environment of 10% (Should light up LED 2)
+        // Test environment of 10% (Should light up LED 3)
         printf("Testing humidity at 40.0%%\n");
         led_humidity_lightup(40.00f);
         sleep_ms(2000);
@@ -144,7 +144,7 @@ int main() {
         led_humidity_lightup(50.00f);
         sleep_ms(2000);
 
-        // Test environment of 80% (Should light up LED 6)
+        // Test environment of 80% (Should light up LED 5)
         printf("Testing humidity at 80.0%%\n");
         led_humidity_lightup(80.00f);
         sleep_ms(2000);
