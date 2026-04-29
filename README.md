@@ -37,4 +37,93 @@ Verify functionality:
     * The drive will disappear, and the Pico will reboot.
 4. **Verify Successful Flashing:**
      * If successful, the LED array on the breadboard should begin their sequential blinking.  
+
+## DHT20 Humidity Sensor Addition
+
+The repo now includes a minimal Raspberry Pi Pico SDK project that talks to an Adafruit DHT20 over I2C before any LCD or LED logic is added.
+
+**Reference Files:**
+* DHT20 Fritzing File (sensor was missing from Fritzing): [DHT20_Sensor.fzpz](docs/DHT20_Sensor.fzpz)
+
+### Current code layout
+
+* `CMakeLists.txt`
+* `pico_sdk_import.cmake`
+* `src/main.c`
+* `src/dht20lib/dht20.c`
+* `src/dht20lib/include/dht20.h`
+
+### Current hardware assumptions
+
+* `i2c0`
+* `GP4` = SDA
+* `GP5` = SCL
+* DHT20 address = `0x38`
+* DHT20 powered from Pico `3V3(OUT)` and `GND`
+
+### Build
+
+If your Pico SDK is installed at a custom path, export it first:
+
+```bash
+export PICO_SDK_PATH=/path/to/pico-sdk
+```
+
+Then configure and build:
+
+```bash
+cmake -B build -S . -DPICO_BOARD=pico_w
+cmake --build build -j
+```
+
+Or use the checked-in CMake preset:
+
+```bash
+cmake --preset pico-debug
+cmake --build --preset pico-debug -j
+```
+
+If CMake reports that `/usr/bin/gcc` cannot compile a test program and shows `-mthumb` as an unrecognized option, the build directory was configured earlier with the host compiler instead of the Pico ARM cross-compiler. Clear the stale cache and configure again:
+
+```bash
+rm -rf build
+cmake -B build -S . -DPICO_BOARD=pico_w
+cmake --build build -j
+```
+
+The generated UF2 will be:
+
+```bash
+build/pico_indoor_humidity_monitor.uf2
+```
+
+### VS Code include troubleshooting
+
+If `main.c` shows `#include` errors for `pico/stdlib.h`, `hardware/i2c.h`, or `dht20.h`, the usual cause is that VS Code has not configured CMake yet.
+
+1. Install the VS Code extensions:
+   * `C/C++`
+   * `CMake Tools`
+2. In your WSL shell, make sure the Pico SDK path is exported before opening VS Code:
+
+```bash
+export PICO_SDK_PATH=/home/cadav/pico-sdk
+code .
+```
+
+3. This workspace is set to use `CMakePresets.json`, so in VS Code select the `pico-debug` or `pico-release` configure preset instead of a host GCC kit.
+
+If you still see `/usr/bin/gcc` in the CMake output, clear the stale configure results with `CMake: Delete Cache and Reconfigure`, then select the `pico-debug` preset.
+
+### Serial output
+
+On successful bring-up, USB serial should print a repeating message similar to:
+
+```text
+Starting DHT20 bring-up on i2c0 (SDA=GP4, SCL=GP5)
+DHT20 detected at 0x38
+Temp: 23.41 C  Humidity: 46.82 %RH
+```
+
+If the sensor is not wired correctly, the firmware keeps retrying and prints a wiring hint instead of silently failing.
   
