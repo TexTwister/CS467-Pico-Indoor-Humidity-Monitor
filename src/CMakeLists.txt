@@ -1,6 +1,7 @@
 add_subdirectory(lcdlib)
 
-add_executable(humidity-monitor main.c)
+add_executable(humidity-monitor led_logic.c
+)
 
 pico_set_program_name(humidity-monitor "humidity-monitor")
 pico_set_program_version(humidity-monitor "0.1")
