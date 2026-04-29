@@ -18,24 +18,7 @@
 #define DHT20_READY_TIMEOUT_MS       150
 #define DHT20_DATA_FRAME_SIZE        7
 
-static bool dht20_measurement_looks_sane(const uint8_t* data) {
-    uint32_t raw_humidity    = 0;
-    uint32_t raw_temperature = 0;
-    float    humidity_rh     = 0.0f;
-    float    temperature_c   = 0.0f;
-
-    raw_humidity = ((uint32_t)data[1] << 12) | ((uint32_t)data[2] << 4) |
-                   ((uint32_t)data[3] >> 4);
-    raw_temperature = (((uint32_t)data[3] & 0x0Fu) << 16) |
-                      ((uint32_t)data[4] << 8) | (uint32_t)data[5];
-
-    humidity_rh   = ((float)raw_humidity * 100.0f) / 1048576.0f;
-    temperature_c = ((float)raw_temperature * 200.0f) / 1048576.0f - 50.0f;
-
-    return humidity_rh >= 0.0f && humidity_rh <= 100.0f &&
-           temperature_c >= -40.0f && temperature_c <= 125.0f;
-}
-
+// Read the DHT20 status byte
 static bool dht20_read_status(const dht20_t* sensor, uint8_t* status) {
     uint8_t command = DHT20_STATUS_COMMAND;
 
@@ -48,6 +31,7 @@ static bool dht20_read_status(const dht20_t* sensor, uint8_t* status) {
            1;
 }
 
+// Poll the sensor until it clears the busy bit or the timeout expires.
 static bool dht20_wait_until_ready(const dht20_t* sensor, uint32_t timeout_ms) {
     absolute_time_t deadline = make_timeout_time_ms(timeout_ms);
     uint8_t         status   = 0;
@@ -69,6 +53,7 @@ static bool dht20_wait_until_ready(const dht20_t* sensor, uint32_t timeout_ms) {
     }
 }
 
+// CRC-8 check used by the DHT20 for the first six bytes of a measurement frame.
 static uint8_t dht20_crc8(const uint8_t* data, size_t length) {
     uint8_t crc = 0xFF;
 
@@ -87,6 +72,7 @@ static uint8_t dht20_crc8(const uint8_t* data, size_t length) {
     return crc;
 }
 
+// Store the I2C configuration and ensure the DHT20 is calibrated before reads.
 bool dht20_init(dht20_t* sensor, i2c_inst_t* i2c, uint8_t address) {
     uint8_t status = 0;
 
@@ -94,11 +80,9 @@ bool dht20_init(dht20_t* sensor, i2c_inst_t* i2c, uint8_t address) {
         return false;
     }
 
-    sensor->i2c                         = i2c;
-    sensor->address                     = address == 0 ? DHT20_DEFAULT_ADDRESS : address;
-    sensor->last_read_used_crc_fallback = false;
-    sensor->last_crc_expected           = 0;
-    sensor->last_crc_received           = 0;
+    // Address 0 means "use the DHT20 default" for convenience at call sites.
+    sensor->i2c     = i2c;
+    sensor->address = address == 0 ? DHT20_DEFAULT_ADDRESS : address;
 
     sleep_ms(DHT20_POWER_ON_DELAY_MS);
 
@@ -124,6 +108,7 @@ bool dht20_init(dht20_t* sensor, i2c_inst_t* i2c, uint8_t address) {
     return (status & DHT20_CALIBRATED_MASK) == DHT20_CALIBRATED_MASK;
 }
 
+// Trigger one measurement, validate its CRC, and convert raw values to units.
 bool dht20_read(dht20_t* sensor, float* temperature_c, float* humidity_rh) {
     const uint8_t trigger_command[3] = {DHT20_TRIGGER_MEASUREMENT_COMMAND, 0x33,
                                         0x00};
@@ -131,15 +116,10 @@ bool dht20_read(dht20_t* sensor, float* temperature_c, float* humidity_rh) {
     uint32_t      raw_humidity                = 0;
     uint32_t      raw_temperature             = 0;
     uint8_t       expected_crc                = 0;
-    bool          crc_mismatch                = false;
 
     if (sensor == NULL || temperature_c == NULL || humidity_rh == NULL) {
         return false;
     }
-
-    sensor->last_read_used_crc_fallback = false;
-    sensor->last_crc_expected           = 0;
-    sensor->last_crc_received           = 0;
 
     if (!dht20_wait_until_ready(sensor, DHT20_READY_TIMEOUT_MS)) {
         return false;
@@ -165,15 +145,13 @@ bool dht20_read(dht20_t* sensor, float* temperature_c, float* humidity_rh) {
         return false;
     }
 
+    // Reject corrupted frames instead of displaying questionable readings.
     expected_crc = dht20_crc8(data, 6);
-    sensor->last_crc_expected = expected_crc;
-    sensor->last_crc_received = data[6];
-    crc_mismatch = expected_crc != data[6];
-    if (crc_mismatch && !dht20_measurement_looks_sane(data)) {
+    if (expected_crc != data[6]) {
         return false;
     }
-    sensor->last_read_used_crc_fallback = crc_mismatch;
 
+    // Humidity and temperature are packed as two 20-bit unsigned values.
     raw_humidity = ((uint32_t)data[1] << 12) | ((uint32_t)data[2] << 4) |
                    ((uint32_t)data[3] >> 4);
 
