@@ -14,6 +14,13 @@ target_link_libraries(dht20lib
         hardware_i2c
 )
 
+if($ENV{CHECK_CRC} MATCHES 0)
+    target_compile_options(dht20lib
+        PRIVATE
+            -DCHECK_CRC=0
+    )
+endif()
+
 add_executable(humidity-monitor main.c)
 
 pico_set_program_name(humidity-monitor "humidity-monitor")
