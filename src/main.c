@@ -30,7 +30,7 @@ static void configure_dht20_i2c_bus(void) {
 }
 
 // Clear the 16x2 LCD and write one string to each display row.
-static void lcd_write_string(struct lcd_inst* lcd, const char* line1,
+static void __lcd_write_string(struct lcd_inst* lcd, const char* line1,
                             const char* line2) {
     lcd_clear_screen(lcd);
     sleep_ms(2);
@@ -55,7 +55,7 @@ int main(void) {
 
     printf("Starting DHT20 Humidity Sensor (SDA=GP%d, SCL=GP%d)\n",
            DHT20_SDA_PIN, DHT20_SCL_PIN);
-    lcd_write_string(&lcd, "DHT20 starting", "Waiting...");
+    __lcd_write_string(&lcd, "DHT20 starting", "Waiting...");
 
     // Keep retrying startup so the device can recover if wiring or power
     // settles late.
@@ -64,12 +64,12 @@ int main(void) {
             "DHT20 not ready at 0x%02X. Check to ensure it is properly "
             "connected to the I2C.\n",
             DHT20_DEFAULT_ADDRESS);
-        lcd_write_string(&lcd, "DHT20 not ready", "Check wiring");
+        __lcd_write_string(&lcd, "DHT20 not ready", "Check wiring");
         sleep_ms(SENSOR_UPDATE_INTERVAL_MS);
     }
 
     printf("DHT20 found at 0x%02X\n", DHT20_DEFAULT_ADDRESS);
-    lcd_write_string(&lcd, "DHT20 found", "Reading...");
+    __lcd_write_string(&lcd, "DHT20 found", "Reading...");
 
     while (true) {
         // LCD rows are 16 characters plus a null terminator.
@@ -86,10 +86,10 @@ int main(void) {
                    humidity_rh);
             snprintf(line1, sizeof(line1), "Temperature:%6.2f C", temperature_c);
             snprintf(line2, sizeof(line2), "Humidity: %6.2f%%", humidity_rh);
-            lcd_write_string(&lcd, line1, line2);
+            __lcd_write_string(&lcd, line1, line2);
         } else {
             printf("DHT20 read failed\n");
-            lcd_write_string(&lcd, "DHT20 read fail", "Retrying...");
+            __lcd_write_string(&lcd, "DHT20 read fail", "Retrying...");
         }
 
         sleep_ms(SENSOR_UPDATE_INTERVAL_MS);
