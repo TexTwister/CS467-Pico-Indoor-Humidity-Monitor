@@ -16,6 +16,7 @@
 #define LCD_SCL_PIN               27    // I2C SCL pin number (physical pin 32)
 #define SENSOR_UPDATE_INTERVAL_MS 5000  // 5 seconds between sensor reads.
 #define LCD_ROW_2                 0x40
+#define DEGREE_SYMB               0b11011111  // See HD44780 data sheet page 17
 // TODO: Choose a GPIO pin for a physical C/F toggle button and define it here.
 
 // Configure the Pico pins used by the DHT20 as an I2C bus.
@@ -74,9 +75,9 @@ int main(void) {
             // Fahrenheit mode is selected.
             printf("Temp: %.2f C  Humidity: %.2f %%RH\n", temperature_c,
                    humidity_rh);
-            snprintf(line1, sizeof(line1), "Temperature:%6.2f C",
+            snprintf(line1, sizeof(line1), "Temp (%cC):  %4.1f", DEGREE_SYMB,
                      temperature_c);
-            snprintf(line2, sizeof(line2), "Humidity: %6.2f%%", humidity_rh);
+            snprintf(line2, sizeof(line2), "Humidity%%:  %4.1f", humidity_rh);
             lcd_write_string_two_lines(&lcd, line1, line2);
         } else {
             printf("DHT20 read failed\n");
