@@ -4,6 +4,12 @@
 
 #include "pico/stdlib.h"
 
+// enable checking CRC bit by default. Compile with -DCHECK_CRC=0 to disable
+// CRC checking for sensor variants that don't send CRC bit
+#ifndef CHECK_CRC
+    #define CHECK_CRC 1
+#endif
+
 #define DHT20_STATUS_COMMAND              0x71
 #define DHT20_INITIALIZE_COMMAND          0xBE
 #define DHT20_TRIGGER_MEASUREMENT_COMMAND 0xAC
@@ -16,7 +22,12 @@
 #define DHT20_MEASUREMENT_DELAY_MS   80
 #define DHT20_READY_POLL_INTERVAL_MS 5
 #define DHT20_READY_TIMEOUT_MS       150
-#define DHT20_DATA_FRAME_SIZE        7
+
+#if CHECK_CRC == 1
+    #define DHT20_DATA_FRAME_SIZE 7
+#else
+    #define DHT20_DATA_FRAME_SIZE 6
+#endif
 
 // Read the DHT20 status byte
 static bool dht20_read_status(const dht20_t* sensor, uint8_t* status) {
@@ -145,11 +156,13 @@ bool dht20_read(dht20_t* sensor, float* temperature_c, float* humidity_rh) {
         return false;
     }
 
+#if CHECK_CRC == 1
     // Reject corrupted frames instead of displaying questionable readings.
     expected_crc = dht20_crc8(data, 6);
     if (expected_crc != data[6]) {
         return false;
     }
+#endif
 
     // Humidity and temperature are packed as two 20-bit unsigned values.
     raw_humidity = ((uint32_t)data[1] << 12) | ((uint32_t)data[2] << 4) |
