@@ -66,23 +66,23 @@
 //                                                                            /
 ///////////////////////////////////////////////////////////////////////////////
 
-void write_byte(struct lcd_inst* lcd, uint8_t b) {
+void write_byte(const struct lcd_inst* lcd, uint8_t b) {
     i2c_write_blocking(lcd->i2c_inst, LCD_ADDR, &b, 1, false);
 }
 
-void pulse_enable(struct lcd_inst* lcd, uint8_t val) {
+void pulse_enable(const struct lcd_inst* lcd, uint8_t val) {
     write_byte(lcd, val | PULSE);
     sleep_us(ENABLE_CYCLE_TIME / 2);
     write_byte(lcd, val & ~PULSE);
     sleep_us(ENABLE_CYCLE_TIME / 2);
 }
 
-void send_nibble(struct lcd_inst* lcd, uint8_t val) {
+void send_nibble(const struct lcd_inst* lcd, uint8_t val) {
     write_byte(lcd, val);
     pulse_enable(lcd, val);
 }
 
-void send_byte_as_nibbles(struct lcd_inst* lcd, uint8_t b, uint8_t mode) {
+void send_byte_as_nibbles(const struct lcd_inst* lcd, uint8_t b, uint8_t mode) {
     uint8_t high = (b & LOW_BITMASK) | mode | LCD_BACKLIGHT;
     uint8_t low  = ((b << 4) & LOW_BITMASK) | mode | LCD_BACKLIGHT;
     send_nibble(lcd, high);
@@ -91,7 +91,7 @@ void send_byte_as_nibbles(struct lcd_inst* lcd, uint8_t b, uint8_t mode) {
 
 void do_hd44780_init_seq(struct lcd_inst* lcd) {
     send_nibble(lcd, LCD_INIT_CODE | LCD_BACKLIGHT);
-    sleep_us(5);
+    sleep_ms(5);
     send_nibble(lcd, LCD_INIT_CODE | LCD_BACKLIGHT);
     sleep_us(150);
     send_nibble(lcd, LCD_INIT_CODE | LCD_BACKLIGHT);
@@ -110,15 +110,15 @@ void __i2c_init(struct lcd_inst* lcd) {
     gpio_pull_up(lcd->i2c_scl);
 }
 
-void send_command(struct lcd_inst* lcd, uint8_t cmd) {
+void send_command(const struct lcd_inst* lcd, uint8_t cmd) {
     send_byte_as_nibbles(lcd, cmd, RS_INSTR);
 }
 
-void write_char(struct lcd_inst* lcd, char c) {
+void write_char(const struct lcd_inst* lcd, char c) {
     send_byte_as_nibbles(lcd, (uint8_t)c, RS_DATA);
 }
 
-uint8_t read_busy_flag(struct lcd_inst* lcd) {
+uint8_t read_busy_flag(const struct lcd_inst* lcd) {
     // mask data bits (high nibble) to tell expander we want to change to read
     // mode, and tell LCD's instruction register we want to read.
     uint8_t control = LOW_BITMASK | RS_INSTR | RW_READ | LCD_BACKLIGHT;
@@ -157,7 +157,9 @@ uint8_t read_busy_flag(struct lcd_inst* lcd) {
 //                                                                            /
 ///////////////////////////////////////////////////////////////////////////////
 
-void lcd_clear_screen(struct lcd_inst* lcd) { send_command(lcd, LCD_CLEAR); }
+void lcd_clear_screen(const struct lcd_inst* lcd) {
+    send_command(lcd, LCD_CLEAR);
+}
 
 void lcd_init(struct lcd_inst* lcd) {
     __i2c_init(lcd);
@@ -170,13 +172,13 @@ void lcd_init(struct lcd_inst* lcd) {
     send_command(lcd, LCD_CLEAR);
 }
 
-uint8_t lcd_get_ac(struct lcd_inst* lcd) {
+uint8_t lcd_get_ac(const struct lcd_inst* lcd) {
     uint8_t result = read_busy_flag(lcd);
 
     return result & 0b00111111;
 }
 
-void lcd_set_cursor(struct lcd_inst* lcd, uint8_t addr) {
+void lcd_set_cursor(const struct lcd_inst* lcd, uint8_t addr) {
     if ((addr > DDRAM_ROW1_END && addr < DDRAM_ROW2_BEGIN) ||
         addr > DDRAM_ROW2_END) {
         return;
@@ -186,15 +188,17 @@ void lcd_set_cursor(struct lcd_inst* lcd, uint8_t addr) {
     send_command(lcd, cmd);
 }
 
-void lcd_shift_left(struct lcd_inst* lcd, uint8_t n) {
+void lcd_shift_left(const struct lcd_inst* lcd, uint8_t n) {
     for (int i = 0; i < n; i++) {
         send_command(lcd, LCD_SHIFT_DISPLAY_LEFT);
     }
 }
 
-void lcd_write_char(struct lcd_inst* lcd, char c) { write_char(lcd, c); }
+void lcd_write_char(const struct lcd_inst* lcd, const char c) {
+    write_char(lcd, c);
+}
 
-void lcd_write_string(struct lcd_inst* lcd, char* s) {
+void lcd_write_string(const struct lcd_inst* lcd, const char* s) {
     uint8_t ac        = lcd_get_ac(lcd);
     uint8_t high_addr = DDRAM_ROW1_END;
     if (ac > DDRAM_ROW1_END) {
@@ -209,4 +213,13 @@ void lcd_write_string(struct lcd_inst* lcd, char* s) {
     for (int i = 0; i < max_len; i++) {
         write_char(lcd, s[i]);
     }
+}
+
+void lcd_write_string_two_lines(const struct lcd_inst* lcd, const char* line1,
+                                const char* line2) {
+    lcd_clear_screen(lcd);
+    lcd_set_cursor(lcd, DDRAM_ROW1_BEGIN);
+    lcd_write_string(lcd, line1);
+    lcd_set_cursor(lcd, DDRAM_ROW2_BEGIN);
+    lcd_write_string(lcd, line2);
 }

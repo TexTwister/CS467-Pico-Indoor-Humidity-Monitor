@@ -300,9 +300,3 @@ WhitespaceSensitiveMacros:
   - PP_STRINGIZE
   - STRINGIZE
 WrapNamespaceBodyWithEmptyLines: Leave
-
-...
-<<<<<<< HEAD
-=======
-
->>>>>>> c220b5a9feaa8486e14e4b501a1c799913dbef58
