@@ -1,7 +1,24 @@
 add_subdirectory(lcdlib)
 
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 add_executable(humidity-monitor led_logic.c
+=======
+add_library(dht20lib dht20lib/dht20.c)
+
+target_include_directories(dht20lib
+    PUBLIC
+        dht20lib/include
+)
+
+target_link_libraries(dht20lib
+    PRIVATE
+        pico_stdlib
+    PUBLIC
+        hardware_i2c
+)
+add_executable(humidity-monitor main.c led_logic.c
+>>>>>>> Stashed changes
 )
 =======
 add_library(dht20lib dht20lib/dht20.c)
