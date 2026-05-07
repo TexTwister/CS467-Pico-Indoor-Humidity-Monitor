@@ -1,5 +1,6 @@
 add_subdirectory(lcdlib)
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< HEAD
 add_executable(humidity-monitor led_logic.c
@@ -21,6 +22,8 @@ add_executable(humidity-monitor main.c led_logic.c
 >>>>>>> Stashed changes
 )
 =======
+=======
+>>>>>>> 59fc737af58ac847b8d550ff25f45a9d95e3687a
 add_library(dht20lib dht20lib/dht20.c)
 
 target_include_directories(dht20lib
@@ -34,6 +37,7 @@ target_link_libraries(dht20lib
     PUBLIC
         hardware_i2c
 )
+<<<<<<< HEAD
 
 if($ENV{CHECK_CRC} MATCHES 0)
     target_compile_options(dht20lib
@@ -44,6 +48,10 @@ endif()
 
 add_executable(humidity-monitor main.c)
 >>>>>>> main
+=======
+add_executable(humidity-monitor main.c led_logic.c
+)
+>>>>>>> 59fc737af58ac847b8d550ff25f45a9d95e3687a
 
 pico_set_program_name(humidity-monitor "humidity-monitor")
 pico_set_program_version(humidity-monitor "0.1")
