@@ -13,14 +13,10 @@
             "cacheVariables": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": true,
                 "PICO_BOARD": "pico_w",
-                "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc",
-                "PICO_SDK_PATH": "/home/cadav/pico-sdk",
-                "PICOTOOL_FETCH_FROM_GIT_PATH": "/home/cadav/.cache/pico-sdk-tools"
+                "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc"
             },
             "environment": {
-                "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc",
-                "PICO_SDK_PATH": "/home/cadav/pico-sdk",
-                "PICOTOOL_FETCH_FROM_GIT_PATH": "/home/cadav/.cache/pico-sdk-tools"
+                "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc"
             }
         },
         {
