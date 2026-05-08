@@ -40,3 +40,11 @@ target_link_libraries(humidity-monitor
 )
 
 pico_add_extra_outputs(humidity-monitor)
+
+add_executable(led_test led_test.c)
+
+target_link_libraries(led_test
+    PRIVATE
+        ledlib
+        pico_stdlib
+)
