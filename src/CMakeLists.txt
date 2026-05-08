@@ -1,5 +1,4 @@
 add_subdirectory(lcdlib)
-add_subdirectory(ledlib)
 
 add_library(dht20lib dht20lib/dht20.c)
 
@@ -22,7 +21,7 @@ if($ENV{CHECK_CRC} MATCHES 0)
     )
 endif()
 
-add_executable(humidity-monitor main.c)
+add_executable(humidity-monitor main.c led_logic.c)
 
 pico_set_program_name(humidity-monitor "humidity-monitor")
 pico_set_program_version(humidity-monitor "0.1")
@@ -36,7 +35,12 @@ target_link_libraries(humidity-monitor
         pico_stdlib
         dht20lib
         lcdlib
-        ledlib
+        # ledlib
+)
+
+target_include_directories(humidity-monitor
+    PRIVATE
+        ledlib/include
 )
 
 pico_add_extra_outputs(humidity-monitor)

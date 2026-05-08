@@ -10,17 +10,19 @@
             "name": "pico-base",
             "hidden": true,
             "binaryDir": "${sourceDir}/build/${presetName}",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "CMAKE_MAKE_PROGRAM": "C:/Users/satte/.pico-sdk/ninja/v1.12.1/ninja.exe",
                 "PICO_BOARD": "pico_w",
                 "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc",
-                "PICO_SDK_PATH": "/home/cadav/pico-sdk",
-                "PICOTOOL_FETCH_FROM_GIT_PATH": "/home/cadav/.cache/pico-sdk-tools"
+                "PICO_SDK_PATH": "C:/Users/satte/.pico-sdk/sdk/2.2.0",
+                "PICOTOOL_FETCH_FROM_GIT_PATH": "C:/Users/satte/.pico-sdk/picotool/2.2.0-a4/picotool"
             },
             "environment": {
                 "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc",
-                "PICO_SDK_PATH": "/home/cadav/pico-sdk",
-                "PICOTOOL_FETCH_FROM_GIT_PATH": "/home/cadav/.cache/pico-sdk-tools"
+                "PICO_SDK_PATH": "C:/Users/satte/.pico-sdk/sdk/2.2.0",
+                "PICOTOOL_FETCH_FROM_GIT_PATH": "C:/Users/satte/.pico-sdk/picotool/2.2.0-a4/picotool"
             }
         },
         {
