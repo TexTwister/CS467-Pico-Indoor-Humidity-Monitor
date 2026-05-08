@@ -18,15 +18,19 @@
 #define SENSOR_UPDATE_INTERVAL_MS 5000  // 5 seconds between sensor reads.
 #define LCD_ROW_2                 0x40
 #define DEGREE_SYMB               0b11011111  // See HD44780 data sheet page 17
-// TODO: Choose a GPIO pin for a physical C/F toggle button and define it here.
+/**
+ * @todo Choose a GPIO pin for a physical C/F toggle button and define it here.
+ */
 
-// Configure the Pico pins used by the DHT20 as an I2C bus.
+/**
+ * @brief Configures the Pico GPIO pins used by the DHT20 as an I2C bus.
+ */
 static void configure_dht20_i2c_bus(void) {
     i2c_init(DHT20_I2C_PORT, DHT20_I2C_BAUDRATE);
     gpio_set_function(DHT20_SDA_PIN, GPIO_FUNC_I2C);
     gpio_set_function(DHT20_SCL_PIN, GPIO_FUNC_I2C);
 
-    // Enable pull-ups on I2C lines
+    /** @brief Enables pull-ups on the DHT20 I2C lines. */
     gpio_pull_up(DHT20_SDA_PIN);
     gpio_pull_up(DHT20_SCL_PIN);
 }
@@ -42,7 +46,9 @@ int main(void) {
 
     lcd_init(&lcd);
     configure_dht20_i2c_bus();
-    // TODO: Initialize the C/F toggle button GPIO with a pull-up or pull-down.
+    /**
+     * @todo Initialize the C/F toggle button GPIO with a pull-up or pull-down.
+     */
 
     // Initialize LED pins and begin ping pong light pattern
     led_init_hardware();
@@ -52,8 +58,10 @@ int main(void) {
            DHT20_SDA_PIN, DHT20_SCL_PIN);
     lcd_write_string_two_lines(&lcd, "DHT20 starting", "Waiting...");
 
-    // Keep retrying startup so the device can recover if wiring or power
-    // settles late.
+    /**
+     * @brief Retries startup so the device can recover if wiring or power
+     * settles late.
+     */
     while (!dht20_init(&sensor, DHT20_I2C_PORT, DHT20_DEFAULT_ADDRESS)) {
         printf(
             "DHT20 not ready at 0x%02X. Check to ensure it is properly "
@@ -71,17 +79,21 @@ int main(void) {
     lcd_write_string_two_lines(&lcd, "DHT20 found", "Reading...");
 
     while (true) {
-        // LCD rows are 16 characters plus a null terminator.
+        /** @brief LCD rows are 16 characters plus a null terminator. */
         char  line1[17]     = {0};
         char  line2[17]     = {0};
         float temperature_c = 0.0f;
         float humidity_rh   = 0.0f;
 
-        // TODO: Check the button state here and toggle between
-        // Celsius/Fahrenheit.
+        /**
+         * @todo Check the button state here and toggle between Celsius and
+         * Fahrenheit.
+         */
         if (dht20_read(&sensor, &temperature_c, &humidity_rh)) {
-            // TODO: Convert temperature_c to Fahrenheit before formatting when
-            // Fahrenheit mode is selected.
+            /**
+             * @todo Convert temperature_c to Fahrenheit before formatting when
+             * Fahrenheit mode is selected.
+             */
             printf("Temp: %.2f C  Humidity: %.2f %%RH\n", temperature_c,
                    humidity_rh);
             // Update LED display based on humidity reading
