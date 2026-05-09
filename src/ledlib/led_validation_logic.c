@@ -6,19 +6,23 @@
 bool is_humidity_valid(float humidity) {
     // Check 1: Hardware/Sensor Failure (NaN)
 
-    if(isnan(humidity)) {
-        printf("[Validation Error]: Sensor returned NaN -- Check wiring and breadboard)\n");
+    if (isnan(humidity)) {
+        printf(
+            "[Validation Error]: Sensor returned NaN -- Check wiring and "
+            "breadboard)\n");
         return false;
     }
 
     // Check 2: Impossible number (negative)
     if (humidity < 0.0f) {
-        printf("[Validation Error]: Negative humidity (%.2f%%) detected.\n", humidity);
+        printf("[Validation Error]: Negative humidity (%.2f%%) detected.\n",
+               humidity);
     }
-    
-    //Check 3: Impossible number or outside range 0-100)
+
+    // Check 3: Impossible number or outside range 0-100)
     if (humidity > 100.0f) {
-        printf("[Validation Error]: Humidity above 100%% (%.2f%%) detected.\n", humidity);
+        printf("[Validation Error]: Humidity above 100%% (%.2f%%) detected.\n",
+               humidity);
     }
 
     return true;
@@ -71,7 +75,7 @@ void run_led_sweep_test(void) {
     printf("...LED Sweep Complete...\n");
 }
 
-// Begins validation testing followed by a sequential sweep from stage 1 to 6. 
+// Begins validation testing followed by a sequential sweep from stage 1 to 6.
 void run_full_LED_verification(void) {
     printf("\n...Starting Full LED System Verification...");
 
@@ -79,7 +83,7 @@ void run_full_LED_verification(void) {
     run_validation_demo();
     sleep_ms(2000);
 
-    //Tests LED mapping and wiring
+    // Tests LED mapping and wiring
     run_led_sweep_test();
 
     printf("...All Tests Complete: System Stable...");
