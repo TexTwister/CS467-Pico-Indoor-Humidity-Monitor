@@ -14,6 +14,17 @@ target_link_libraries(dht20lib
         hardware_i2c
 )
 
+add_library(ledlib ledlib/led_logic.c)
+
+target_include_directories(ledlib
+    PUBLIC
+        ledlib/include
+)
+
+target_link_libraries(ledlib
+    PRIVATE
+        pico_stdlib    
+)
 if($ENV{CHECK_CRC} MATCHES 0)
     target_compile_options(dht20lib
         PRIVATE
@@ -21,7 +32,7 @@ if($ENV{CHECK_CRC} MATCHES 0)
     )
 endif()
 
-add_executable(humidity-monitor main.c led_logic.c)
+add_executable(humidity-monitor main.c)
 
 pico_set_program_name(humidity-monitor "humidity-monitor")
 pico_set_program_version(humidity-monitor "0.1")
@@ -35,7 +46,7 @@ target_link_libraries(humidity-monitor
         pico_stdlib
         dht20lib
         lcdlib
-        # ledlib
+        ledlib
 )
 
 target_include_directories(humidity-monitor
@@ -52,3 +63,5 @@ target_link_libraries(led_test
         ledlib
         pico_stdlib
 )
+
+pico_add_extra_outputs(led_test)
