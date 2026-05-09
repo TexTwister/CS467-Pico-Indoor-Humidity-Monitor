@@ -21,7 +21,7 @@ if($ENV{CHECK_CRC} MATCHES 0)
     )
 endif()
 
-add_executable(humidity-monitor main.c)
+add_executable(humidity-monitor main.c led_logic.c)
 
 pico_set_program_name(humidity-monitor "humidity-monitor")
 pico_set_program_version(humidity-monitor "0.1")
@@ -35,6 +35,20 @@ target_link_libraries(humidity-monitor
         pico_stdlib
         dht20lib
         lcdlib
+        # ledlib
+)
+
+target_include_directories(humidity-monitor
+    PRIVATE
+        ledlib/include
 )
 
 pico_add_extra_outputs(humidity-monitor)
+
+add_executable(led_test led_test.c)
+
+target_link_libraries(led_test
+    PRIVATE
+        ledlib
+        pico_stdlib
+)
