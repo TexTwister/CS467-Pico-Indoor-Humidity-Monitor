@@ -20,8 +20,9 @@ const uint LED_PINS[LED_COUNT] = {
 };
 
 void led_init_hardware(void) {
-    // Initializes 6 LED pins 
-
+    // Initializes 6 LED pins and allows for slight delay as sensors power up 
+    sleep_ms(2000);
+    
     for (int i = 0; i < LED_COUNT; i++) {
         gpio_init(LED_PINS[i]); // Wakes up the pins
         gpio_set_dir(LED_PINS[i], GPIO_OUT);  // Send power from pin to LED
