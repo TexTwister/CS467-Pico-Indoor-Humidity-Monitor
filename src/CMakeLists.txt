@@ -14,7 +14,10 @@ target_link_libraries(dht20lib
         hardware_i2c
 )
 
-add_library(ledlib ledlib/led_logic.c)
+add_library(ledlib 
+    ledlib/led_logic.c 
+    ledlib/led_validation_logic.c
+)
 
 target_include_directories(ledlib
     PUBLIC

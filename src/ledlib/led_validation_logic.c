@@ -1,6 +1,7 @@
-#include "include/led_logic.h"
+#include "led_logic.h"
 #include <math.h>
 #include <stdio.h>
+#include "pico/stdlib.h"
 
 bool is_humidity_valid(float humidity) {
     // Check 1: Hardware/Sensor Failure (NaN)
@@ -52,12 +53,12 @@ void run_validation_demo(void) {
     led_validated_display(40.0f);
     sleep_ms(2000);
 
-    printf("...Demo Complete: Resuming Environmental Sensor Readings...\n")
+    printf("...Demo Complete: Resuming Environmental Sensor Readings...\n");
 }
 
 // Scripted demo to test LED mapping for each of the 6 stages
 void run_led_sweep_test(void) {
-    float humidity_vals[] = {5.0f, 25.0f, 37.0f, 52.0f, 75.0f, 90.0f}
+    float humidity_vals[] = {5.0f, 25.0f, 37.0f, 52.0f, 75.0f, 90.0f};
 
     printf("...Starting LED Calibration Sweep...\n");
 
@@ -76,7 +77,7 @@ void run_full_LED_verification(void) {
 
     // Tests logic and NaN handling
     run_validation_demo();
-    sleep_ms(2000)
+    sleep_ms(2000);
 
     //Tests LED mapping and wiring
     run_led_sweep_test();
