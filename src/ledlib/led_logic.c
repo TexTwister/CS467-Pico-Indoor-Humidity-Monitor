@@ -77,13 +77,12 @@ void led_humidity_lightup(float humidity) {
 int humidity_to_led(float humidity) {
     // Converts a float humidity percentage (relative humidity) into a specific
     // light level on a 6-stage array.
-
-    if (humidity < 20.50f) return 1;    // Extremely dry
-    if (humidity < 30.50f) return 2;    // Dry
-    if (humidity < 40.50f) return 3;    // Ideal Winter target zone
-    if (humidity < 60.50f) return 4;    // Ideal Summer target zone
-    if (humidity < 80.50f) return 5;    // Humid
-    if (humidity <= 100.00f) return 6;  // Extremely humid
+    if (humidity >= 0.00f && humidity < 20.50f) return 1;    // Extremely dry
+    if (humidity >= 20.50f && humidity < 30.50f) return 2;    // Dry
+    if (humidity >= 30.50f && humidity < 40.50f) return 3;    // Ideal Winter target zone
+    if (humidity >= 40.50f && humidity < 60.50f) return 4;    // Ideal Summer target zone
+    if (humidity >= 60.50f && humidity < 80.50f) return 5;    // Humid
+    if (humidity >= 80.50f && humidity <= 100.00f) return 6;  // Extremely humid
 
     return 0;
 }
