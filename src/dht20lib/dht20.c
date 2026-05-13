@@ -162,7 +162,6 @@ bool dht20_read(const dht20_t* sensor, float* temperature_c, float* humidity_rh)
     uint8_t       data[DHT20_DATA_FRAME_SIZE] = {0};
     uint32_t      raw_humidity                = 0;
     uint32_t      raw_temperature             = 0;
-    uint8_t       expected_crc                = 0;
 
     if (sensor == NULL || temperature_c == NULL || humidity_rh == NULL) {
         return false;
