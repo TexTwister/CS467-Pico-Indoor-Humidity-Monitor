@@ -5,6 +5,8 @@
 
 #include "dht20.h"
 #include "lcdlib.h"
+#include "led_logic.h"
+
 
 #define DHT20_I2C_PORT            i2c0
 #define DHT20_I2C_BAUDRATE        100000
@@ -49,6 +51,10 @@ int main(void) {
      * @todo Initialize the C/F toggle button GPIO with a pull-up or pull-down.
      */
 
+    // Initialize LED pins and begin ping pong light pattern
+    led_init_hardware();
+    led_startup_sequence();
+
     printf("Starting DHT20 Humidity Sensor (SDA=GP%d, SCL=GP%d)\n",
            DHT20_SDA_PIN, DHT20_SCL_PIN);
     lcd_write_string_two_lines(&lcd, "DHT20 starting", "Waiting...");
@@ -63,6 +69,10 @@ int main(void) {
             "connected to the I2C.\n",
             DHT20_DEFAULT_ADDRESS);
         lcd_write_string_two_lines(&lcd, "DHT20 not ready", "Check wiring");
+        
+        // Display error pattern on LEDs if sensor is not found
+        led_error_flash();
+        
         sleep_ms(SENSOR_UPDATE_INTERVAL_MS);
     }
 
@@ -87,6 +97,9 @@ int main(void) {
              */
             printf("Temp: %.2f C  Humidity: %.2f %%RH\n", temperature_c,
                    humidity_rh);
+            // Update LED display based on humidity reading       
+            led_humidity_lightup(humidity_rh);
+
             snprintf(line1, sizeof(line1), "Temp (%cC):  %4.1f", DEGREE_SYMB,
                      temperature_c);
             snprintf(line2, sizeof(line2), "Humidity%%:  %4.1f", humidity_rh);
@@ -94,6 +107,10 @@ int main(void) {
         } else {
             printf("DHT20 read failed\n");
             lcd_write_string_two_lines(&lcd, "DHT20 read fail", "Retrying...");
+        
+            // Blinking error if a read fails
+            led_error_flash();
+        
         }
 
         sleep_ms(SENSOR_UPDATE_INTERVAL_MS);
