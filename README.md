@@ -56,10 +56,12 @@ The repo now includes a minimal Raspberry Pi Pico SDK project that talks to an A
 ### Current hardware assumptions
 
 * `i2c0`
-* `GP4` = SDA
-* `GP5` = SCL
+* `GP20` = SDA
+* `GP21` = SCL
 * DHT20 address = `0x38`
 * DHT20 powered from Pico `3V3(OUT)` and `GND`
+* `GP4` is used by the LED array, so do not wire DHT20 SDA there unless you
+  also move `LED_6_PIN` in `src/ledlib/led_logic.c`.
 
 ### Build
 
@@ -120,8 +122,8 @@ If you still see `/usr/bin/gcc` in the CMake output, clear the stale configure r
 On successful bring-up, USB serial should print a repeating message similar to:
 
 ```text
-Starting DHT20 bring-up on i2c0 (SDA=GP4, SCL=GP5)
-DHT20 detected at 0x38
+Starting DHT20 Humidity Sensor (SDA=GP20, SCL=GP21)
+DHT20 found at 0x38
 Temp: 23.41 C  Humidity: 46.82 %RH
 ```
 
