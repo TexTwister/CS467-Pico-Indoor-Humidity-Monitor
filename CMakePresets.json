@@ -21,33 +21,79 @@
         "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc"
       }
     },
-    {
-      "name": "pico-debug",
-      "inherits": "pico-base",
-      "displayName": "Pico Debug",
-      "description": "Debug build for Raspberry Pi Pico W using the Pico SDK toolchain.",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "pico-release",
-      "inherits": "pico-base",
-      "displayName": "Pico Release",
-      "description": "Release build for Raspberry Pi Pico W using the Pico SDK toolchain.",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    }
-  ],
-  "buildPresets": [
-    {
-      "name": "pico-debug",
-      "configurePreset": "pico-debug"
-    },
-    {
-      "name": "pico-release",
-      "configurePreset": "pico-release"
-    }
-  ]
+    "configurePresets": [
+        {
+            "name": "pico-base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "PICO_BOARD": "pico_w",
+                "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc"
+            },
+            "environment": {
+                "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc"
+            }
+        },
+        {
+            "name": "pico-ninja-base",
+            "hidden": true,
+            "inherits": "pico-base",
+            "generator": "Ninja"
+        },
+        {
+            "name": "pico-debug",
+            "inherits": "pico-base",
+            "displayName": "Pico Debug",
+            "description": "Debug build for Raspberry Pi Pico W using the Pico SDK toolchain and CMake's default generator.",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "pico-release",
+            "inherits": "pico-base",
+            "displayName": "Pico Release",
+            "description": "Release build for Raspberry Pi Pico W using the Pico SDK toolchain and CMake's default generator.",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "pico-debug-ninja",
+            "inherits": "pico-ninja-base",
+            "displayName": "Pico Debug (Ninja)",
+            "description": "Debug build for Raspberry Pi Pico W using Ninja.",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "pico-release-ninja",
+            "inherits": "pico-ninja-base",
+            "displayName": "Pico Release (Ninja)",
+            "description": "Release build for Raspberry Pi Pico W using Ninja.",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "pico-debug",
+            "configurePreset": "pico-debug"
+        },
+        {
+            "name": "pico-release",
+            "configurePreset": "pico-release"
+        },
+        {
+            "name": "pico-debug-ninja",
+            "configurePreset": "pico-debug-ninja"
+        },
+        {
+            "name": "pico-release-ninja",
+            "configurePreset": "pico-release-ninja"
+        }
+    ]
 }

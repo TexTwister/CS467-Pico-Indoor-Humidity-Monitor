@@ -5,16 +5,16 @@
 #include "pico/stdlib.h"
 
 /**
- * @brief Enables DHT20 measurement CRC validation by default.
+ * @brief Enables optional DHT20 measurement CRC validation.
  *
- * Compile with -DCHECK_CRC=0 to disable CRC checking for sensor variants that
- * do not send the CRC byte.
+ * Most AHT20/DHT20-compatible breakout examples read the 6-byte measurement
+ * payload. Compile with -DCHECK_CRC=1 for sensor variants that send the
+ * seventh CRC byte.
  */
 #ifndef CHECK_CRC
-#define CHECK_CRC 1
+#define CHECK_CRC 0
 #endif
 
-#define DHT20_STATUS_COMMAND              0x71
 #define DHT20_INITIALIZE_COMMAND          0xBE
 #define DHT20_TRIGGER_MEASUREMENT_COMMAND 0xAC
 
@@ -41,13 +41,6 @@
  * @return true when the status byte is read successfully, false otherwise.
  */
 static bool dht20_read_status(const dht20_t* sensor, uint8_t* status) {
-    const uint8_t command = DHT20_STATUS_COMMAND;
-
-    if (i2c_write_blocking(sensor->i2c, sensor->address, &command, 1, true) <
-        0) {
-        return false;
-    }
-
     return i2c_read_blocking(sensor->i2c, sensor->address, status, 1, false) ==
            1;
 }

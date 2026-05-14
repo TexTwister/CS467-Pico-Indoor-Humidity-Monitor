@@ -15,10 +15,10 @@ target_link_libraries(dht20lib
         hardware_i2c
 )
 
-if($ENV{CHECK_CRC} MATCHES 0)
+if(DEFINED ENV{CHECK_CRC} AND "$ENV{CHECK_CRC}" MATCHES "^[01]$")
     target_compile_options(dht20lib
         PRIVATE
-            -DCHECK_CRC=0
+            -DCHECK_CRC=$ENV{CHECK_CRC}
     )
 endif()
 
