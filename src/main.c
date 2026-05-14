@@ -7,7 +7,6 @@
 #include "lcdlib.h"
 #include "led_logic.h"
 
-
 #define DHT20_I2C_PORT            i2c0
 #define DHT20_I2C_BAUDRATE        100000
 #define DHT20_SDA_PIN             20  // GPIO pin number for DHT20 SDA line
@@ -61,10 +60,10 @@ int main(void) {
             "connected to the I2C.\n",
             DHT20_DEFAULT_ADDRESS);
         lcd_write_string_two_lines(&lcd, "DHT20 not ready", "Check wiring");
-        
+
         // Display error pattern on LEDs if sensor is not found
         led_error_flash();
-        
+
         sleep_ms(SENSOR_UPDATE_INTERVAL_MS);
     }
 
@@ -85,7 +84,7 @@ int main(void) {
             // Fahrenheit mode is selected.
             printf("Temp: %.2f C  Humidity: %.2f %%RH\n", temperature_c,
                    humidity_rh);
-            // Update LED display based on humidity reading       
+            // Update LED display based on humidity reading
             led_humidity_lightup(humidity_rh);
 
             snprintf(line1, sizeof(line1), "Temp (%cC):  %4.1f", DEGREE_SYMB,
@@ -95,10 +94,9 @@ int main(void) {
         } else {
             printf("DHT20 read failed\n");
             lcd_write_string_two_lines(&lcd, "DHT20 read fail", "Retrying...");
-        
+
             // Blinking error if a read fails
             led_error_flash();
-        
         }
 
         sleep_ms(SENSOR_UPDATE_INTERVAL_MS);
