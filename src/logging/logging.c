@@ -2,6 +2,8 @@
 #include "pico/printf.h"
 #include "pico/stdlib.h"
 
+#define MAX_MSG_CHARS 1024
+
 static LogLevel _lvl     = INFO;
 static int      fileinfo = 0;
 
@@ -11,7 +13,7 @@ void include_fileinfo(void) { fileinfo = 1; }
 
 void disable_fileinfo(void) { fileinfo = 0; }
 
-void printlog(const char* msg, LogLevel lvl) {
+void printlog(LogLevel lvl, const char* msg, ...) {
     if (lvl < _lvl) {
         return;
     }
@@ -33,8 +35,15 @@ void printlog(const char* msg, LogLevel lvl) {
             break;
     }
 
+    va_list list;
+    va_start(list, msg);
+
+    char fmesg[MAX_MSG_CHARS];
+    vsnprintf(fmesg, MAX_MSG_CHARS, msg, list);
+    va_end(list);
+
     printf("%010d | %s | \"%s\"", to_ms_since_boot(get_absolute_time()),
-           level_str, msg, __FILE__, __LINE__);
+           level_str, fmesg);
 
     if (fileinfo) {
         printf(" | file: %s | line: %d\n", __FILE__, __LINE__);

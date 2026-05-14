@@ -36,11 +36,17 @@ void disable_fileinfo(void);
 
 /**
  * Log a message to stdout, if the given level is above the minimum defined
- * log level.
+ * log level. Use this like you would printf() by passing a formatted string
+ * msg and the arguments to insert into the formatted string.
  *
- * @param msg The message to include in the printed log output.
  * @param lvl The log's level.
+ * @param msg The message to include in the printed log output.
+ * @param ... Variable number of arguments to include in formatted msg,
+ * separated by commas.
+ *
+ * @note the formatted message is limited to 1024 characters; anything longer
+ * will be cut off.
  */
-void printlog(const char* msg, LogLevel lvl);
+void printlog(LogLevel lvl, const char* msg, ...);
 
 #endif  // _LOGGING_H
