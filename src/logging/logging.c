@@ -46,8 +46,8 @@ void printlog(LogLevel lvl, const char* msg, ...) {
            level_str, fmesg);
 
     if (fileinfo) {
-        printf(" | file: %s | line: %d\n", __FILE__, __LINE__);
-    } else {
-        printf("\n");
+        printf(" | file: %s | line: %d", __FILE__, __LINE__);
     }
+
+    printf("\n");
 }
