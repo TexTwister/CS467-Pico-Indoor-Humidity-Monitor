@@ -1,0 +1,44 @@
+#include "logging.h"
+#include "pico/printf.h"
+#include "pico/stdlib.h"
+
+static LogLevel _lvl     = INFO;
+static int      fileinfo = 0;
+
+void set_log_level(LogLevel lvl) { _lvl = lvl; }
+
+void include_fileinfo(void) { fileinfo = 1; }
+
+void disable_fileinfo(void) { fileinfo = 0; }
+
+void printlog(const char* msg, LogLevel lvl) {
+    if (lvl < _lvl) {
+        return;
+    }
+
+    char* level_str;
+
+    switch (lvl) {
+        case DEBUG:
+            level_str = "\033[1;92mDEBUG  \033[0m";
+            break;
+        case INFO:
+            level_str = "\033[1;97mINFO   \033[0m";
+            break;
+        case WARNING:
+            level_str = "\033[1;93mWARNING\033[0m";
+            break;
+        default:
+            level_str = "\033[1;91mERROR  \033[0m";
+            break;
+    }
+
+    printf("%010d | %s | \"%s\"", to_ms_since_boot(get_absolute_time()),
+           level_str, msg, __FILE__, __LINE__);
+
+    if (fileinfo) {
+        printf(" | file: %s | line: %d\n", __FILE__, __LINE__);
+    } else {
+        printf("\n");
+    }
+}
