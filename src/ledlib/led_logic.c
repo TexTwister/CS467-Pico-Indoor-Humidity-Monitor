@@ -63,6 +63,12 @@ void led_humidity_lightup(float humidity) {
     // (Yellow), LED 6 (Red)
 
     int stage        = humidity_to_led(humidity);
+    
+    if (stage == 0) {
+        led_error_flash();
+        return;
+    }
+
     int target_index = stage - 1;  // Maps LED 1-6 to array index  0-5
 
     for (int i = 0; i < LED_COUNT; i++) {

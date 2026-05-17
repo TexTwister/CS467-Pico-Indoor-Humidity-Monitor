@@ -17,12 +17,14 @@ bool is_humidity_valid(float humidity) {
     if (humidity < 0.0f) {
         printf("[Validation Error]: Negative humidity (%.2f%%) detected.\n",
                humidity);
+        return false;
     }
 
     // Check 3: Impossible number or outside range 0-100)
     if (humidity > 100.0f) {
         printf("[Validation Error]: Humidity above 100%% (%.2f%%) detected.\n",
                humidity);
+        return false;
     }
 
     return true;
