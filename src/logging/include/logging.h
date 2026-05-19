@@ -1,5 +1,5 @@
-#ifndef _LOGGING_H
-#define _LOGGING_H
+#ifndef LOGGING_H
+#define LOGGING_H
 
 /**
  * Logging level definitions. Default is info.
@@ -20,21 +20,6 @@ typedef enum {
 void set_log_level(LogLevel lvl);
 
 /**
- * Include filename and line of log function in logging output (useful for
- * debugging).
- */
-void include_fileinfo(void);
-
-/**
- * Don't include filename and line of log function in logging output.
- *
- * @note filename and log information are excluded by default. You only need
- * to call this if you previously called include_fileinfo() and now want to
- * keep them out.
- */
-void disable_fileinfo(void);
-
-/**
  * Log a message to stdout, if the given level is above the minimum defined
  * log level. Use this like you would printf() by passing a formatted string
  * msg and the arguments to insert into the formatted string.
@@ -49,4 +34,4 @@ void disable_fileinfo(void);
  */
 void printlog(LogLevel lvl, const char* msg, ...);
 
-#endif  // _LOGGING_H
+#endif  // LOGGING_H
