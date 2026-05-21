@@ -53,3 +53,5 @@ target_link_libraries(led_test
         ledlib
         pico_stdlib
 )
+
+pico_add_extra_outputs(led_test)
