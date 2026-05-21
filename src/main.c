@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include "hardware/i2c.h"
 #include "pico/stdlib.h"
 
@@ -45,6 +44,7 @@ int main(void) {
     configure_dht20_i2c_bus();
     // TODO: Initialize the C/F toggle button GPIO with a pull-up or pull-down.
 
+    // LED basic hardware check
     // Initialize LED pins and begin ping pong light pattern
     led_init_hardware();
     led_startup_sequence();
@@ -86,7 +86,7 @@ int main(void) {
             printf("Temp: %.2f C  Humidity: %.2f %%RH\n", temperature_c,
                    humidity_rh);
             // Update LED display based on humidity reading       
-            led_humidity_lightup(humidity_rh);
+            led_validated_display(humidity_rh);
 
             snprintf(line1, sizeof(line1), "Temp (%cC):  %4.1f", DEGREE_SYMB,
                      temperature_c);
@@ -98,7 +98,6 @@ int main(void) {
         
             // Blinking error if a read fails
             led_error_flash();
-        
         }
 
         sleep_ms(SENSOR_UPDATE_INTERVAL_MS);
