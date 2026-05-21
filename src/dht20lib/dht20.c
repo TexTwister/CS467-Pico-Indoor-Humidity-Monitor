@@ -4,13 +4,17 @@
 
 #include "pico/stdlib.h"
 
-// enable checking CRC bit by default. Compile with -DCHECK_CRC=0 to disable
-// CRC checking for sensor variants that don't send CRC bit
+/**
+ * @brief Enables optional DHT20 measurement CRC validation.
+ *
+ * Most AHT20/DHT20-compatible breakout examples read the 6-byte measurement
+ * payload. Compile with -DCHECK_CRC=1 for sensor variants that send the
+ * seventh CRC byte.
+ */
 #ifndef CHECK_CRC
-    #define CHECK_CRC 1
+#define CHECK_CRC 0
 #endif
 
-#define DHT20_STATUS_COMMAND              0x71
 #define DHT20_INITIALIZE_COMMAND          0xBE
 #define DHT20_TRIGGER_MEASUREMENT_COMMAND 0xAC
 
@@ -24,27 +28,32 @@
 #define DHT20_READY_TIMEOUT_MS       150
 
 #if CHECK_CRC == 1
-    #define DHT20_DATA_FRAME_SIZE 7
+#define DHT20_DATA_FRAME_SIZE 7
 #else
-    #define DHT20_DATA_FRAME_SIZE 6
+#define DHT20_DATA_FRAME_SIZE 6
 #endif
 
-// Read the DHT20 status byte
+/**
+ * @brief Reads the DHT20 status byte.
+ *
+ * @param sensor DHT20 sensor configuration.
+ * @param status Destination for the returned status byte.
+ * @return true when the status byte is read successfully, false otherwise.
+ */
 static bool dht20_read_status(const dht20_t* sensor, uint8_t* status) {
-    uint8_t command = DHT20_STATUS_COMMAND;
-
-    if (i2c_write_blocking(sensor->i2c, sensor->address, &command, 1, true) <
-        0) {
-        return false;
-    }
-
     return i2c_read_blocking(sensor->i2c, sensor->address, status, 1, false) ==
            1;
 }
 
-// Poll the sensor until it clears the busy bit or the timeout expires.
+/**
+ * @brief Waits for the DHT20 to clear its busy bit.
+ *
+ * @param sensor DHT20 sensor configuration.
+ * @param timeout_ms Maximum time to wait, in milliseconds.
+ * @return true when the sensor is ready, false on timeout or I2C failure.
+ */
 static bool dht20_wait_until_ready(const dht20_t* sensor, uint32_t timeout_ms) {
-    absolute_time_t deadline = make_timeout_time_ms(timeout_ms);
+    const absolute_time_t deadline = make_timeout_time_ms(timeout_ms);
     uint8_t         status   = 0;
 
     while (true) {
@@ -64,7 +73,13 @@ static bool dht20_wait_until_ready(const dht20_t* sensor, uint32_t timeout_ms) {
     }
 }
 
-// CRC-8 check used by the DHT20 for the first six bytes of a measurement frame.
+/**
+ * @brief Calculates the DHT20 CRC-8 for a measurement frame.
+ *
+ * @param data Measurement frame bytes.
+ * @param length Number of bytes to include in the CRC calculation.
+ * @return Calculated CRC-8 value.
+ */
 static uint8_t dht20_crc8(const uint8_t* data, size_t length) {
     uint8_t crc = 0xFF;
 
@@ -83,7 +98,14 @@ static uint8_t dht20_crc8(const uint8_t* data, size_t length) {
     return crc;
 }
 
-// Store the I2C configuration and ensure the DHT20 is calibrated before reads.
+/**
+ * @brief Stores the I2C configuration and prepares the DHT20 for reads.
+ *
+ * @param sensor DHT20 sensor state to initialize.
+ * @param i2c I2C instance connected to the sensor.
+ * @param address Sensor I2C address, or 0 to use DHT20_DEFAULT_ADDRESS.
+ * @return true when the sensor is reachable and calibrated, false otherwise.
+ */
 bool dht20_init(dht20_t* sensor, i2c_inst_t* i2c, uint8_t address) {
     uint8_t status = 0;
 
@@ -119,14 +141,20 @@ bool dht20_init(dht20_t* sensor, i2c_inst_t* i2c, uint8_t address) {
     return (status & DHT20_CALIBRATED_MASK) == DHT20_CALIBRATED_MASK;
 }
 
-// Trigger one measurement, validate its CRC, and convert raw values to units.
-bool dht20_read(dht20_t* sensor, float* temperature_c, float* humidity_rh) {
+/**
+ * @brief Reads one DHT20 temperature and humidity sample.
+ *
+ * @param sensor Initialized DHT20 sensor state.
+ * @param temperature_c Destination for temperature in degrees Celsius.
+ * @param humidity_rh Destination for relative humidity percentage.
+ * @return true when a valid sample is read, false otherwise.
+ */
+bool dht20_read(const dht20_t* sensor, float* temperature_c, float* humidity_rh) {
     const uint8_t trigger_command[3] = {DHT20_TRIGGER_MEASUREMENT_COMMAND, 0x33,
                                         0x00};
     uint8_t       data[DHT20_DATA_FRAME_SIZE] = {0};
     uint32_t      raw_humidity                = 0;
     uint32_t      raw_temperature             = 0;
-    uint8_t       expected_crc                = 0;
 
     if (sensor == NULL || temperature_c == NULL || humidity_rh == NULL) {
         return false;
@@ -158,7 +186,7 @@ bool dht20_read(dht20_t* sensor, float* temperature_c, float* humidity_rh) {
 
 #if CHECK_CRC == 1
     // Reject corrupted frames instead of displaying questionable readings.
-    expected_crc = dht20_crc8(data, 6);
+    const uint8_t expected_crc = dht20_crc8(data, 6);
     if (expected_crc != data[6]) {
         return false;
     }
