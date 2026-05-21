@@ -124,9 +124,6 @@ int main(void) {
     led_init_hardware();
     led_startup_sequence();
 
-    // // For demo purposes on Prog 3/ Final Video
-    // run_full_LED_verification();
-
     printf("Starting DHT20 Humidity Sensor (SDA=GP%d, SCL=GP%d)\n",
            DHT20_SDA_PIN, DHT20_SCL_PIN);
     lcd_write_string_two_lines(&lcd, "DHT20 starting", "Waiting...");
