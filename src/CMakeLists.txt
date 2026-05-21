@@ -1,4 +1,5 @@
 add_subdirectory(lcdlib)
+add_subdirectory(ledlib)
 
 add_library(dht20lib dht20lib/dht20.c)
 
@@ -14,20 +15,6 @@ target_link_libraries(dht20lib
         hardware_i2c
 )
 
-add_library(ledlib 
-    ledlib/led_logic.c 
-    ledlib/led_validation_logic.c
-)
-
-target_include_directories(ledlib
-    PUBLIC
-        ledlib/include
-)
-
-target_link_libraries(ledlib
-    PRIVATE
-        pico_stdlib    
-)
 if($ENV{CHECK_CRC} MATCHES 0)
     target_compile_options(dht20lib
         PRIVATE
@@ -50,11 +37,6 @@ target_link_libraries(humidity-monitor
         dht20lib
         lcdlib
         ledlib
-)
-
-target_include_directories(humidity-monitor
-    PRIVATE
-        ledlib/include
 )
 
 pico_add_extra_outputs(humidity-monitor)
