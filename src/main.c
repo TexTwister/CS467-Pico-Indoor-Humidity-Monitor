@@ -6,7 +6,6 @@
 #include "lcdlib.h"
 #include "led_logic.h"
 
-
 #define DHT20_I2C_PORT            i2c0
 #define DHT20_I2C_BAUDRATE        100000
 #define DHT20_SDA_PIN             20  // GPIO pin number for DHT20 SDA line
@@ -96,7 +95,7 @@ static bool temperature_toggle_button_was_pressed(void) {
     temperature_button_event_pending = false;
     sleep_ms(BUTTON_DEBOUNCE_MS);
 
-    const bool button_is_pressed = !gpio_get(TEMP_TOGGLE_BUTTON_PIN);
+    const bool button_is_pressed     = !gpio_get(TEMP_TOGGLE_BUTTON_PIN);
     temperature_button_event_pending = false;
 
     if (button_is_pressed && !button_press_latched) {
@@ -126,9 +125,9 @@ static bool sleep_and_check_temperature_button(uint32_t duration_ms) {
         }
 
         const uint32_t remaining_ms = duration_ms - elapsed_ms;
-        const uint32_t delay_ms =
-            remaining_ms < BUTTON_POLL_INTERVAL_MS ? remaining_ms
-                                                   : BUTTON_POLL_INTERVAL_MS;
+        const uint32_t delay_ms     = remaining_ms < BUTTON_POLL_INTERVAL_MS
+                                          ? remaining_ms
+                                          : BUTTON_POLL_INTERVAL_MS;
         sleep_ms(delay_ms);
         elapsed_ms += delay_ms;
     }
@@ -166,10 +165,10 @@ int main(void) {
             "connected to the I2C.\n",
             DHT20_DEFAULT_ADDRESS);
         lcd_write_string_two_lines(&lcd, "DHT20 not ready", "Check wiring");
-        
+
         // Display error pattern on LEDs if sensor is not found
         led_error_flash();
-        
+
         sleep_ms(SENSOR_UPDATE_INTERVAL_MS);
     }
 
@@ -201,7 +200,7 @@ int main(void) {
         } else {
             printf("DHT20 read failed\n");
             lcd_write_string_two_lines(&lcd, "DHT20 read fail", "Retrying...");
-        
+
             // Blinking error if a read fails
             led_error_flash();
         }

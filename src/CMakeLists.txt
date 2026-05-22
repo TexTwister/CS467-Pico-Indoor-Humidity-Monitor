@@ -39,11 +39,6 @@ target_link_libraries(humidity-monitor
         ledlib
 )
 
-target_include_directories(humidity-monitor
-    PRIVATE
-        ledlib/include
-)
-
 pico_add_extra_outputs(humidity-monitor)
 
 add_executable(led_test led_test.c)
@@ -54,4 +49,8 @@ target_link_libraries(led_test
         pico_stdlib
 )
 
+add_subdirectory(logging)
+add_executable(logdemo logdemo.c)
+target_link_libraries(logdemo PRIVATE logging)
+pico_enable_stdio_usb(logdemo 1)
 pico_add_extra_outputs(led_test)

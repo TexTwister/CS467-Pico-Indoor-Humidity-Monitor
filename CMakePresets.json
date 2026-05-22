@@ -1,9 +1,25 @@
 {
-    "version": 3,
-    "cmakeMinimumRequired": {
-        "major": 3,
-        "minor": 21,
-        "patch": 0
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "pico-base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+        "CMAKE_MAKE_PROGRAM": "C:/Users/satte/.pico-sdk/ninja/v1.12.1/ninja.exe",
+        "PICO_BOARD": "pico_w",
+        "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc"
+      },
+      "environment": {
+        "PICO_COMPILER": "pico_arm_cortex_m0plus_gcc"
+      }
     },
     "configurePresets": [
         {
