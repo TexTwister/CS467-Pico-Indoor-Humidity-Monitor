@@ -25,12 +25,6 @@ int main(void) {
 
         set_log_level(DEBUG);
 
-        include_fileinfo();
-        printlog(INFO,
-                 "include file and line number where printlog() was called");
-        disable_fileinfo();
-        sleep_ms(1000);
-
         printlog(INFO, "Use it like %s with %s", "printf()", "formatted text");
         sleep_ms(1000);
     }
