@@ -1,10 +1,13 @@
 #include "logging.h"
+
+#include <inttypes.h>
+
 #include "pico/printf.h"
 #include "pico/stdlib.h"
 
 #define MAX_MSG_CHARS 256
 
-static LogLevel _lvl     = INFO;
+static LogLevel _lvl = INFO;
 
 void set_log_level(LogLevel lvl) { _lvl = lvl; }
 
@@ -13,7 +16,7 @@ void printlog(LogLevel lvl, const char* msg, ...) {
         return;
     }
 
-    char* level_str;
+    const char* level_str;
 
     switch (lvl) {
         case DEBUG:
@@ -37,6 +40,6 @@ void printlog(LogLevel lvl, const char* msg, ...) {
     vsnprintf(fmesg, MAX_MSG_CHARS, msg, list);
     va_end(list);
 
-    printf("%010d | %s | \"%s\"\n", to_ms_since_boot(get_absolute_time()),
-           level_str, fmesg);
+    printf("%010" PRIu32 " | %s | \"%s\"\n",
+           to_ms_since_boot(get_absolute_time()), level_str, fmesg);
 }

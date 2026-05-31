@@ -16,12 +16,12 @@
 #define LCD_SCL_PIN               27    // I2C SCL pin number (physical pin 32)
 #define SENSOR_UPDATE_INTERVAL_MS 5000  // 5 seconds between sensor reads.
 #define LCD_ROW_2                 0x40
-#define DEGREE_SYMB               0b11011111  // See HD44780 data sheet page 17
+#define DEGREE_SYMB               0xDF  // See HD44780 data sheet page 17
 #define TEMP_TOGGLE_BUTTON_PIN    16  // Physical pin 21; connect button to GND
 // Debounce waits for switch contacts to settle so one press toggles only once.
-#define BUTTON_DEBOUNCE_MS        50
+#define BUTTON_DEBOUNCE_MS 50
 // Checking every 20 ms lets the app exit idle sleep soon after a button event.
-#define BUTTON_POLL_INTERVAL_MS   20
+#define BUTTON_POLL_INTERVAL_MS 20
 
 static volatile bool temperature_button_event_pending = false;
 
@@ -54,9 +54,8 @@ static void configure_temperature_toggle_button(void) {
     gpio_init(TEMP_TOGGLE_BUTTON_PIN);
     gpio_set_dir(TEMP_TOGGLE_BUTTON_PIN, GPIO_IN);
     gpio_pull_up(TEMP_TOGGLE_BUTTON_PIN);
-    gpio_set_irq_enabled_with_callback(TEMP_TOGGLE_BUTTON_PIN,
-                                       GPIO_IRQ_EDGE_FALL, true,
-                                       &gpio_irq_callback);
+    gpio_set_irq_enabled_with_callback(
+        TEMP_TOGGLE_BUTTON_PIN, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_callback);
 }
 
 /**
@@ -190,7 +189,7 @@ int main(void) {
 
             printf("Temp: %.2f %c  Humidity: %.2f %%RH\n",
                    displayed_temperature, temperature_unit, humidity_rh);
-            // Update LED display based on humidity reading       
+            // Update LED display based on humidity reading
             led_validated_display(humidity_rh);
 
             snprintf(line1, sizeof(line1), "Temp %c%c: %5.1f", DEGREE_SYMB,

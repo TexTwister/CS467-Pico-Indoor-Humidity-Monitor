@@ -49,15 +49,15 @@
 
 /* Register Select (RS) - Determines whether to access instruction (command) or
  * data register */
-#define RS_INSTR 0b00000000
-#define RS_DATA  0b00000001
+#define RS_INSTR 0x00
+#define RS_DATA  0x01
 /* R/W - Whether we want to read from or write to register */
-#define RW_WRITE 0b00000000
-#define RW_READ  0b00000010
+#define RW_WRITE 0x00
+#define RW_READ  0x02
 /* Enable - bit must be toggled (pulsed) before any data read or write */
-#define PULSE 0b00000100
+#define PULSE 0x04
 /* Backlight - must be set on every send or else backlight will turn off */
-#define LCD_BACKLIGHT 0b00001000
+#define LCD_BACKLIGHT 0x08
 /* Enable toggle needs to be set high for for minimum 450us and the entire pulse
  * cycle must last at least 1000us */
 #define ENABLE_CYCLE_TIME 1000  // data sheet page 49
@@ -66,30 +66,31 @@
 //                                                                            /
 ///////////////////////////////////////////////////////////////////////////////
 
-void write_byte(const struct lcd_inst* lcd, uint8_t b) {
+static void write_byte(const struct lcd_inst* lcd, uint8_t b) {
     i2c_write_blocking(lcd->i2c_inst, LCD_ADDR, &b, 1, false);
 }
 
-void pulse_enable(const struct lcd_inst* lcd, uint8_t val) {
+static void pulse_enable(const struct lcd_inst* lcd, uint8_t val) {
     write_byte(lcd, val | PULSE);
     sleep_us(ENABLE_CYCLE_TIME / 2);
     write_byte(lcd, val & ~PULSE);
     sleep_us(ENABLE_CYCLE_TIME / 2);
 }
 
-void send_nibble(const struct lcd_inst* lcd, uint8_t val) {
+static void send_nibble(const struct lcd_inst* lcd, uint8_t val) {
     write_byte(lcd, val);
     pulse_enable(lcd, val);
 }
 
-void send_byte_as_nibbles(const struct lcd_inst* lcd, uint8_t b, uint8_t mode) {
+static void send_byte_as_nibbles(const struct lcd_inst* lcd, uint8_t b,
+                                 uint8_t mode) {
     uint8_t high = (b & LOW_BITMASK) | mode | LCD_BACKLIGHT;
     uint8_t low  = ((b << 4) & LOW_BITMASK) | mode | LCD_BACKLIGHT;
     send_nibble(lcd, high);
     send_nibble(lcd, low);
 }
 
-void do_hd44780_init_seq(struct lcd_inst* lcd) {
+static void do_hd44780_init_seq(struct lcd_inst* lcd) {
     send_nibble(lcd, LCD_INIT_CODE | LCD_BACKLIGHT);
     sleep_ms(5);
     send_nibble(lcd, LCD_INIT_CODE | LCD_BACKLIGHT);
@@ -99,7 +100,7 @@ void do_hd44780_init_seq(struct lcd_inst* lcd) {
     send_nibble(lcd, LCD_SET_4BIT | LCD_BACKLIGHT);
 }
 
-void __i2c_init(struct lcd_inst* lcd) {
+static void lcd_i2c_init(struct lcd_inst* lcd) {
     lcd->i2c_inst = i2c_get_instance(lcd->hw_num);
     i2c_init(lcd->i2c_inst, lcd->baudrate);
 
@@ -110,15 +111,15 @@ void __i2c_init(struct lcd_inst* lcd) {
     gpio_pull_up(lcd->i2c_scl);
 }
 
-void send_command(const struct lcd_inst* lcd, uint8_t cmd) {
+static void send_command(const struct lcd_inst* lcd, uint8_t cmd) {
     send_byte_as_nibbles(lcd, cmd, RS_INSTR);
 }
 
-void write_char(const struct lcd_inst* lcd, char c) {
+static void write_char(const struct lcd_inst* lcd, char c) {
     send_byte_as_nibbles(lcd, (uint8_t)c, RS_DATA);
 }
 
-uint8_t read_busy_flag(const struct lcd_inst* lcd) {
+static uint8_t read_busy_flag(const struct lcd_inst* lcd) {
     // mask data bits (high nibble) to tell expander we want to change to read
     // mode, and tell LCD's instruction register we want to read.
     uint8_t control = LOW_BITMASK | RS_INSTR | RW_READ | LCD_BACKLIGHT;
@@ -162,7 +163,7 @@ void lcd_clear_screen(const struct lcd_inst* lcd) {
 }
 
 void lcd_init(struct lcd_inst* lcd) {
-    __i2c_init(lcd);
+    lcd_i2c_init(lcd);
 
     do_hd44780_init_seq(lcd);
 
@@ -175,7 +176,7 @@ void lcd_init(struct lcd_inst* lcd) {
 uint8_t lcd_get_ac(const struct lcd_inst* lcd) {
     uint8_t result = read_busy_flag(lcd);
 
-    return result & 0b00111111;
+    return result & 0x3F;
 }
 
 void lcd_set_cursor(const struct lcd_inst* lcd, uint8_t addr) {

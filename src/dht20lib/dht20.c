@@ -54,7 +54,7 @@ static bool dht20_read_status(const dht20_t* sensor, uint8_t* status) {
  */
 static bool dht20_wait_until_ready(const dht20_t* sensor, uint32_t timeout_ms) {
     const absolute_time_t deadline = make_timeout_time_ms(timeout_ms);
-    uint8_t         status   = 0;
+    uint8_t               status   = 0;
 
     while (true) {
         if (!dht20_read_status(sensor, &status)) {
@@ -73,6 +73,7 @@ static bool dht20_wait_until_ready(const dht20_t* sensor, uint32_t timeout_ms) {
     }
 }
 
+#if CHECK_CRC == 1
 /**
  * @brief Calculates the DHT20 CRC-8 for a measurement frame.
  *
@@ -97,6 +98,7 @@ static uint8_t dht20_crc8(const uint8_t* data, size_t length) {
 
     return crc;
 }
+#endif
 
 /**
  * @brief Stores the I2C configuration and prepares the DHT20 for reads.
@@ -149,7 +151,8 @@ bool dht20_init(dht20_t* sensor, i2c_inst_t* i2c, uint8_t address) {
  * @param humidity_rh Destination for relative humidity percentage.
  * @return true when a valid sample is read, false otherwise.
  */
-bool dht20_read(const dht20_t* sensor, float* temperature_c, float* humidity_rh) {
+bool dht20_read(const dht20_t* sensor, float* temperature_c,
+                float* humidity_rh) {
     const uint8_t trigger_command[3] = {DHT20_TRIGGER_MEASUREMENT_COMMAND, 0x33,
                                         0x00};
     uint8_t       data[DHT20_DATA_FRAME_SIZE] = {0};

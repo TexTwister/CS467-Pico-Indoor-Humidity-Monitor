@@ -33,8 +33,10 @@ bool dht20_init(dht20_t* sensor, i2c_inst_t* i2c, uint8_t address);
  * @param sensor Initialized DHT20 sensor state.
  * @param temperature_c Destination for temperature in degrees Celsius.
  * @param humidity_rh Destination for relative humidity percentage.
- * @return true when a sample is read successfully; false on I2C, busy, or CRC failure.
+ * @return true when a sample is read successfully; false on I2C, busy, or CRC
+ * failure.
  */
-bool dht20_read(const dht20_t* sensor, float* temperature_c, float* humidity_rh);
+bool dht20_read(const dht20_t* sensor, float* temperature_c,
+                float* humidity_rh);
 
 #endif

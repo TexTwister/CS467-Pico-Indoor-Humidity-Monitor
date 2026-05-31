@@ -10,29 +10,32 @@
 
 /**
  * @brief Initializes the GPIO pins for the LED array.
- * * Sets the pins defined in LED_PINS to output mode and
+ *
+ * Sets the pins defined in LED_PINS to output mode and
  * ensures they start in the OFF state.
  */
-
 void led_init_hardware(void);
 
 /**
  * @brief Runs a ping pong style startup display pattern.
- * * Sequentially toggles LEDs from 1 to 6 and back to 1.
+ *
+ * Sequentially toggles LEDs from 1 to 6 and back to 1.
  * Used to verify all LEDs are wired correctly upon startup.
  */
 void led_startup_sequence(void);
 
 /**
  * @brief Maps a humidity value to a specific LED stage.
- *  * @param humidity The relative humidity percentage. 
- *  @return int The LED index (1 through LED_COUNT)
+ *
+ * @param humidity The relative humidity percentage.
+ * @return int The LED index (1 through LED_COUNT)
  */
 int humidity_to_led(float humidity);
 
 /**
  * @brief Updates the LED array based on the humidity percentage.
- *  * @param humidity The relative humidity percentage. 
+ *
+ * @param humidity The relative humidity percentage.
  */
 void led_humidity_lightup(float humidity);
 
@@ -48,14 +51,15 @@ void led_error_flash(void);
 bool is_humidity_valid(float humidity);
 
 /**
- * Wrapper function to be used in main.c or test suites.
- * Decides whether to show the humidity level or the error pattern on the LED array.
+ * @brief Wrapper function to be used in main.c or test suites.
+ *
+ * Decides whether to show the humidity level or the error pattern on the LED
+ * array.
  */
 void led_validated_display(float humidity);
 
 /**
- * @brief Runs a scripted test passing invalid data (0.0% > humidity > 100%, NaN value)
- * to verify the prototype triggers error states correctly.
+ * @brief Runs a scripted test passing invalid humidity values.
  */
 void run_validation_demo(void);
 
@@ -70,4 +74,4 @@ void run_led_sweep_test(void);
  */
 void run_full_LED_verification(void);
 
-#endif // LED_LOGIC_H
+#endif  // LED_LOGIC_H

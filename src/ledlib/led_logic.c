@@ -1,6 +1,6 @@
 #include "led_logic.h"
+
 #include "pico/stdlib.h"
-#include <stdio.h>
 
 // Hardware Pin Mapping Definitions (GPIO Numbers)
 #define LED_1_PIN 14
@@ -10,8 +10,8 @@
 #define LED_5_PIN 6
 #define LED_6_PIN 4
 
-const uint LED_PINS[LED_COUNT] = {LED_1_PIN, LED_2_PIN, LED_3_PIN,
-                                  LED_4_PIN, LED_5_PIN, LED_6_PIN};
+static const uint LED_PINS[LED_COUNT] = {LED_1_PIN, LED_2_PIN, LED_3_PIN,
+                                         LED_4_PIN, LED_5_PIN, LED_6_PIN};
 
 void led_init_hardware(void) {
     // Initializes 6 LED pins and allows for slight delay as sensors power up
@@ -34,9 +34,9 @@ void led_startup_sequence(void) {
             gpio_put(LED_PINS[i], 0);
         }
 
-        // Right to left movement
-        // Start at index 4 to skip double blink on end
-        for (int i = 4; i > 0; i--) {
+        // Right to left movement; skip index 5 to avoid double blinking the
+        // end.
+        for (int i = LED_COUNT - 2; i >= 0; i--) {
             gpio_put(LED_PINS[i], 1);
             sleep_ms(200);
             gpio_put(LED_PINS[i], 0);
@@ -62,8 +62,8 @@ void led_humidity_lightup(float humidity) {
     // LED 1 (Red), LED 2 (Yellow), LED 3 (Green), LED 4 (Green), LED 5
     // (Yellow), LED 6 (Red)
 
-    int stage        = humidity_to_led(humidity);
-    
+    int stage = humidity_to_led(humidity);
+
     if (stage == 0) {
         led_error_flash();
         return;
@@ -83,10 +83,12 @@ void led_humidity_lightup(float humidity) {
 int humidity_to_led(float humidity) {
     // Converts a float humidity percentage (relative humidity) into a specific
     // light level on a 6-stage array.
-    if (humidity >= 0.00f && humidity < 20.50f) return 1;    // Extremely dry
-    if (humidity >= 20.50f && humidity < 30.50f) return 2;    // Dry
-    if (humidity >= 30.50f && humidity < 40.50f) return 3;    // Ideal Winter target zone
-    if (humidity >= 40.50f && humidity < 60.50f) return 4;    // Ideal Summer target zone
+    if (humidity >= 0.00f && humidity < 20.50f) return 1;   // Extremely dry
+    if (humidity >= 20.50f && humidity < 30.50f) return 2;  // Dry
+    if (humidity >= 30.50f && humidity < 40.50f)
+        return 3;  // Ideal Winter target zone
+    if (humidity >= 40.50f && humidity < 60.50f)
+        return 4;  // Ideal Summer target zone
     if (humidity >= 60.50f && humidity < 80.50f) return 5;    // Humid
     if (humidity >= 80.50f && humidity <= 100.00f) return 6;  // Extremely humid
 
